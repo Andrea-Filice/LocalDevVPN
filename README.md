@@ -8,7 +8,7 @@
       style="height: 80px; width: auto; border-radius: 14px;"
     >
   </a>
-  <a href="https://intradeus.github.io/http-protocol-redirector?r=altstore-pal://source?url=https://adp.se2crid.me/" 
+  <a href="https://api.altstore.io/source/adp.se2crid.me?app=com.jkcoxson.LocalDevVPN" 
      target="_blank" rel="noopener noreferrer">
     <img 
       src="https://github.com/user-attachments/assets/0cadc474-ca12-4b83-b04c-2962087cabcb" 
