@@ -2,12 +2,14 @@ name: Build IPA with Fake Signing
 
 on:
     push:
-        branches: [main] # Or your default branch
-    workflow_dispatch: # Allows manual triggering
+        branches: [main]
+    pull_request:
+        branches: [main]
+    workflow_dispatch:
 
 jobs:
     build:
-        runs-on: macos-latest # Use the latest macOS runner
+        runs-on: macos-latest
 
         steps:
             - name: Checkout repository
