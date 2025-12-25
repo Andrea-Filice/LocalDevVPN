@@ -789,12 +789,18 @@ struct StatusOverviewCard: View {
                 Text("current_status")
                     .font(.headline)
 
-                HStack(spacing: 18) {
+                VStack(spacing: 18) {
                     StatusGlyphView()
 
                     Text(tunnelManager.tunnelStatus.localizedTitle)
                         .font(.title3)
                         .fontWeight(.semibold)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    
+                    Text(localizedCaption)
+                        .font(.caption2)
+                        .fontWeight(.regular)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
@@ -814,10 +820,12 @@ struct StatusOverviewCard: View {
 
                     HStack(spacing: 4) {
                         if TunnelManager.shared.tunnelStatus == .connected {
+                            Image(systemName: "clock")
                             Text("connected_at")
                             Text(Date(), style: .time)
                         }
                         else {
+                            Image(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
                             Text("last_connected_at")
                             Text(Date(), style: .time)
                         }
@@ -841,6 +849,21 @@ struct StatusOverviewCard: View {
             return NSLocalizedString("open_settings_to_review_details", comment: "")
         default:
             return NSLocalizedString("tap_connect_to_create_the_tunnel", comment: "")
+        }
+    }
+    
+    private var localizedCaption: String {
+        switch tunnelManager.tunnelStatus {
+        case .disconnected:
+            return NSLocalizedString("disconnectedCaption", comment: "")
+        case .connecting:
+            return String(format: NSLocalizedString("connectingCaption", comment: ""), deviceIP)
+        case .connected:
+            return String(format: NSLocalizedString("connectedCaption", comment: ""), deviceIP)
+        case .disconnecting:
+            return String(format: NSLocalizedString("disconnectingCaption", comment: ""), deviceIP)
+        case .error:
+            return NSLocalizedString("errorCaption", comment: "")
         }
     }
 }
@@ -881,8 +904,11 @@ struct ConnectivityControlsCard: View {
         DashboardCard {
             VStack(alignment: .leading, spacing: 18) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("connection")
-                        .font(.headline)
+                    HStack(spacing: 6){
+                        Image(systemName: "network.badge.shield.half.filled")
+                        Text("connection")
+                            .font(.headline)
+                    }
                     Text("start_or_stop_the_secure_local_tunnel")
                         .font(.footnote)
                         .foregroundColor(.secondary)
@@ -992,8 +1018,11 @@ struct ConnectionStatsView: View {
         DashboardCard {
             VStack(alignment: .leading, spacing: 12) {
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("session_details")
-                        .font(.headline)
+                    HStack(spacing: 6) {
+                        Image(systemName: "iphone.crop.circle")
+                        Text("session_details")
+                            .font(.headline)
+                    }
                     Text("live_stats_while_the_tunnel_is_connected")
                         .font(.footnote)
                         .foregroundColor(.secondary)
@@ -1119,14 +1148,17 @@ struct SettingsView: View {
                 }
                 
                 Section(header: Text("language")) {
-                    Picker("dropdown_language", selection: $selectedLanguage) {
-                        Text("english").tag("en")
-                        Text("spanish").tag("es")
-                        Text("italian").tag("it")
-                        Text("polish").tag("pl")
-                        Text("korean").tag("ko")
-                        Text("TChinese").tag("zh-Hant")
-                        Text("french").tag("fr")
+                    HStack{
+                        Image(systemName: "globe")
+                        Picker("dropdown_language", selection: $selectedLanguage) {
+                            Text("english").tag("en")
+                            Text("spanish").tag("es")
+                            Text("italian").tag("it")
+                            Text("polish").tag("pl")
+                            Text("korean").tag("ko")
+                            Text("TChinese").tag("zh-Hant")
+                            Text("french").tag("fr")
+                        }
                     }
                     .onChange(of: selectedLanguage) { newValue in
                         let languageCode = newValue
@@ -1154,13 +1186,13 @@ struct SettingsView: View {
                         Label("data_collection_policy", systemImage: "hand.raised.slash")
                     }
                     HStack {
-                        Text("app_version")
+                        Label("app_version", systemImage: "info")
                         Spacer()
                         Text(Bundle.main.shortVersion)
                             .foregroundColor(.secondary)
                     }
                     NavigationLink(destination: HelpView()) {
-                        Text("help_and_support")
+                        Label("help_and_support", systemImage: "questionmark.circle")
                     }
                 }
             }
@@ -1272,11 +1304,35 @@ struct ConnectionLogView: View {
 }
 
 struct HelpView: View {
+    @State var startImageTransition : Bool = false
+    
     var body: some View {
         List {
             Section(header: Text("faq_header")) {
                 NavigationLink("faq_q1") {
                     VStack(alignment: .leading, spacing: 15) {
+                        if #available(iOS 18.0, *) {
+                            Image(systemName: startImageTransition ? "network.badge.shield.half.filled" : "network")
+                                .font(.system(size: 80))
+                                .foregroundColor(.blue)
+                                .frame(maxWidth: .infinity, maxHeight: 200, alignment: .center)
+                                .contentTransition(.symbolEffect(.replace.magic(fallback: .offUp.wholeSymbol), options: .nonRepeating))
+                                .onAppear{
+                                    Task{
+                                        try? await Task.sleep(for: .seconds(1))
+                                        startImageTransition = true
+                                    }
+                                }
+                                .onDisappear{
+                                    startImageTransition = false
+                                }
+                        } else {
+                            Image(systemName: "network")
+                                .font(.system(size: 80))
+                                .foregroundColor(.blue)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .frame(maxHeight: 200, alignment: .center)
+                        }
                         Text("faq_q1_a1")
                             .padding(.bottom, 10)
                         Text("faq_common_use_cases")
@@ -1290,6 +1346,28 @@ struct HelpView: View {
                 }
                 NavigationLink("faq_q2") {
                     VStack(alignment: .leading, spacing: 15) {
+                        if #available(iOS 18.0, *) {
+                            Image(systemName: startImageTransition ? "antenna.radiowaves.left.and.right.slash" : "antenna.radiowaves.left.and.right")
+                                .font(.system(size: 80))
+                                .foregroundColor(.blue)
+                                .frame(maxWidth: .infinity, maxHeight: 200, alignment: .center)
+                                .contentTransition(.symbolEffect(.replace.magic(fallback: .offUp.wholeSymbol), options: .nonRepeating))
+                                .onAppear{
+                                    Task{
+                                        try? await Task.sleep(for: .seconds(1))
+                                        startImageTransition = true
+                                    }
+                                }
+                                .onDisappear{
+                                    startImageTransition = false
+                                }
+                        } else {
+                            Image(systemName: "network")
+                                .font(.system(size: 80))
+                                .foregroundColor(.blue)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .frame(maxHeight: 200, alignment: .center)
+                        }
                         Text("faq_q2_a1")
                             .padding(.bottom, 10)
                             .font(.headline)
@@ -1304,6 +1382,28 @@ struct HelpView: View {
                 }
                 NavigationLink("faq_q3") {
                     VStack(alignment: .leading, spacing: 15) {
+                        if #available(iOS 18.0, *) {
+                            Image(systemName: startImageTransition ? "wifi.exclamationmark" : "wifi")
+                                .font(.system(size: 80))
+                                .foregroundColor(.blue)
+                                .frame(maxWidth: .infinity, maxHeight: 200, alignment: .center)
+                                .contentTransition(.symbolEffect(.replace.magic(fallback: .offUp.wholeSymbol), options: .nonRepeating))
+                                .onAppear{
+                                    Task{
+                                        try? await Task.sleep(for: .seconds(1))
+                                        startImageTransition = true
+                                    }
+                                }
+                                .onDisappear{
+                                    startImageTransition = false
+                                }
+                        } else {
+                            Image(systemName: "network")
+                                .font(.system(size: 80))
+                                .foregroundColor(.blue)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .frame(maxHeight: 200, alignment: .center)
+                        }
                         Text("faq_q3_a1")
                             .padding(.bottom, 10)
                         Text("faq_troubleshoot_header")
@@ -1317,6 +1417,28 @@ struct HelpView: View {
                 }
                 NavigationLink("faq_q4") {
                     VStack(alignment: .leading, spacing: 15) {
+                        if #available(iOS 18.0, *) {
+                            Image(systemName: startImageTransition ? "apple.terminal.fill" : "hammer.fill")
+                                .font(.system(size: 80))
+                                .foregroundColor(.blue)
+                                .frame(maxWidth: .infinity, maxHeight: 200, alignment: .center)
+                                .contentTransition(.symbolEffect(.replace.magic(fallback: .offUp.wholeSymbol), options: .nonRepeating))
+                                .onAppear{
+                                    Task{
+                                        try? await Task.sleep(for: .seconds(1))
+                                        startImageTransition = true
+                                    }
+                                }
+                                .onDisappear{
+                                    startImageTransition = false
+                                }
+                        } else {
+                            Image(systemName: "network")
+                                .font(.system(size: 80))
+                                .foregroundColor(.blue)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .frame(maxHeight: 200, alignment: .center)
+                        }
                         Text("faq_q4_intro")
                             .font(.headline)
                             .padding(.bottom, 10)
@@ -1333,6 +1455,28 @@ struct HelpView: View {
             Section(header: Text("business_model_header")) {
                 NavigationLink("biz_q1") {
                     VStack(alignment: .leading, spacing: 15) {
+                        if #available(iOS 18.0, *) {
+                            Image(systemName: startImageTransition ? "person.badge.shield.checkmark.fill" : "person.badge.clock.fill")
+                                .font(.system(size: 80))
+                                .foregroundColor(.blue)
+                                .frame(maxWidth: .infinity, maxHeight: 200, alignment: .center)
+                                .contentTransition(.symbolEffect(.replace.magic(fallback: .offUp.wholeSymbol), options: .nonRepeating))
+                                .onAppear{
+                                    Task{
+                                        try? await Task.sleep(for: .seconds(1))
+                                        startImageTransition = true
+                                    }
+                                }
+                                .onDisappear{
+                                    startImageTransition = false
+                                }
+                        } else {
+                            Image(systemName: "network")
+                                .font(.system(size: 80))
+                                .foregroundColor(.blue)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .frame(maxHeight: 200, alignment: .center)
+                        }
                         Text("biz_q1_a1")
                             .padding(.bottom, 10)
                         Text("biz_key_points_header")

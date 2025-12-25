@@ -3,10 +3,15 @@
 "current_status" = "Current status";
 
 "disconnected" = "Disconnected";
+"disconnectedCaption" = "Disconnected from Tunnel.";
 "connecting" = "Connecting";
+"connectingCaption" = "Connecting to %@...";
 "connected" = "Connected";
+"connectedCaption" = "Connected to %@.";
 "disconnecting" = "Disconnecting";
+"disconnectingCaption" = "Disconnecting from %@...";
 "error" = "Error";
+"errorCaption" = "An unknown error occurred.";
 
 "local_tunnel_active" = "Local Tunnel Active";
 "local_tunnel_inactive" = "Local Tunnel Inactive";
