@@ -871,6 +871,7 @@ struct StatusOverviewCard: View {
 struct StatusGlyphView: View {
     @StateObject private var tunnelManager = TunnelManager.shared
     @State private var ringScale: CGFloat = 1.0
+    @AppStorage("enableAnimations") var enableAnimations = true
 
     var body: some View {
         ZStack {
@@ -882,7 +883,7 @@ struct StatusGlyphView: View {
             Circle()
                 .fill(tunnelManager.tunnelStatus.color.opacity(0.15))
 
-            if #available(iOS 18.0, *){
+            if #available(iOS 18.0, *), enableAnimations{
                 Image(systemName: tunnelManager.tunnelStatus.systemImage)
                     .font(.title)
                     .foregroundColor(tunnelManager.tunnelStatus.color)
@@ -912,11 +913,8 @@ struct ConnectivityControlsCard: View {
         DashboardCard {
             VStack(alignment: .leading, spacing: 18) {
                 VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 6){
-                        Image(systemName: "network.badge.shield.half.filled")
-                        Text("connection")
-                            .font(.headline)
-                    }
+                    Label("connection", systemImage: "network.badge.shield.half.filled")
+                        .font(.headline)
                     Text("start_or_stop_the_secure_local_tunnel")
                         .font(.footnote)
                         .foregroundColor(.secondary)
@@ -1026,11 +1024,8 @@ struct ConnectionStatsView: View {
         DashboardCard {
             VStack(alignment: .leading, spacing: 12) {
                 VStack(alignment: .leading, spacing: 3) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "wifi.badge.lock")
-                        Text("session_details")
-                            .font(.headline)
-                    }
+                    Label("session_details", systemImage: "wifi.badge.lock")
+                        .font(.headline)
                     Text("live_stats_while_the_tunnel_is_connected")
                         .font(.footnote)
                         .foregroundColor(.secondary)
