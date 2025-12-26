@@ -102,11 +102,11 @@ class TunnelManager: ObservableObject {
             case .disconnected:
                 return "disconnected"
             case .connecting:
-                return "connecting"
+                return "connecting_ellipsis"
             case .connected:
                 return "connected"
             case .disconnecting:
-                return "disconnecting"
+                return "disconnecting_ellipsis"
             case .error:
                 return "error"
             }
@@ -882,9 +882,17 @@ struct StatusGlyphView: View {
             Circle()
                 .fill(tunnelManager.tunnelStatus.color.opacity(0.15))
 
-            Image(systemName: tunnelManager.tunnelStatus.systemImage)
-                .font(.title)
-                .foregroundColor(tunnelManager.tunnelStatus.color)
+            if #available(iOS 18.0, *){
+                Image(systemName: tunnelManager.tunnelStatus.systemImage)
+                    .font(.title)
+                    .foregroundColor(tunnelManager.tunnelStatus.color)
+                    .contentTransition(.symbolEffect(.replace))
+            }
+            else{
+                Image(systemName: tunnelManager.tunnelStatus.systemImage)
+                    .font(.title)
+                    .foregroundColor(tunnelManager.tunnelStatus.color)
+            }
         }
         .frame(width: 92, height: 92)
         .onAppear(perform: startPulse)
