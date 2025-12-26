@@ -1133,6 +1133,7 @@ struct SettingsView: View {
     @AppStorage("shownTunnelAlert") private var shownTunnelAlert = false
     @StateObject private var tunnelManager = TunnelManager.shared
     @AppStorage("hasNotCompletedSetup") private var hasNotCompletedSetup = true
+    @AppStorage("enableAnimations") var enableAnimations = true
 
     @State private var showNetworkWarning = false
     @State private var showRestartPopUp = false
@@ -1182,6 +1183,19 @@ struct SettingsView: View {
                                 showRestartPopUp = true
                             }
                         )
+                    }
+                    
+                    if #available(iOS 18.0, *){
+                        Toggle("enable_animation", isOn: $enableAnimations)
+                    }
+                    else{
+                        VStack{
+                            Toggle("enable_animation", isOn: $enableAnimations)
+                                .disabled(true)
+                            Text("not_supported")
+                                .font(.footnote)
+                                .frame(alignment: .center)
+                        }
                     }
                 }
 
@@ -1314,13 +1328,14 @@ struct ConnectionLogView: View {
 
 struct HelpView: View {
     @State var startImageTransition : Bool = false
+    @AppStorage("enableAnimations") var enableAnimations = true
     
     var body: some View {
         List {
             Section(header: Text("faq_header")) {
                 NavigationLink("faq_q1") {
                     VStack(alignment: .leading, spacing: 15) {
-                        if #available(iOS 18.0, *) {
+                        if #available(iOS 18.0, *), enableAnimations{
                             Image(systemName: startImageTransition ? "network.badge.shield.half.filled" : "network")
                                 .resizable()
                                 .scaledToFit()
@@ -1360,7 +1375,7 @@ struct HelpView: View {
                 }
                 NavigationLink("faq_q2") {
                     VStack(alignment: .leading, spacing: 15) {
-                        if #available(iOS 18.0, *) {
+                        if #available(iOS 18.0, *), enableAnimations{
                             Image(systemName: startImageTransition ? "antenna.radiowaves.left.and.right.slash" : "antenna.radiowaves.left.and.right")
                                 .resizable()
                                 .scaledToFit()
@@ -1379,7 +1394,7 @@ struct HelpView: View {
                                     startImageTransition = false
                                 }
                         } else {
-                            Image(systemName: "network")
+                            Image(systemName: "antenna.radiowaves.left.and.right.slash")
                                 .font(.system(size: 80))
                                 .foregroundColor(.blue)
                                 .frame(maxWidth: .infinity, alignment: .center)
@@ -1399,7 +1414,7 @@ struct HelpView: View {
                 }
                 NavigationLink("faq_q3") {
                     VStack(alignment: .leading, spacing: 15) {
-                        if #available(iOS 18.0, *) {
+                        if #available(iOS 18.0, *), enableAnimations{
                             Image(systemName: startImageTransition ? "wifi.exclamationmark" : "wifi")
                                 .font(.system(size: 80))
                                 .foregroundColor(.blue)
@@ -1415,7 +1430,7 @@ struct HelpView: View {
                                     startImageTransition = false
                                 }
                         } else {
-                            Image(systemName: "network")
+                            Image(systemName: "wifi.exclamationmark")
                                 .font(.system(size: 80))
                                 .foregroundColor(.blue)
                                 .frame(maxWidth: .infinity, alignment: .center)
@@ -1434,7 +1449,7 @@ struct HelpView: View {
                 }
                 NavigationLink("faq_q4") {
                     VStack(alignment: .leading, spacing: 15) {
-                        if #available(iOS 18.0, *) {
+                        if #available(iOS 18.0, *), enableAnimations {
                             Image(systemName: startImageTransition ? "apple.terminal.fill" : "hammer.fill")
                                 .font(.system(size: 80))
                                 .foregroundColor(.blue)
@@ -1450,7 +1465,7 @@ struct HelpView: View {
                                     startImageTransition = false
                                 }
                         } else {
-                            Image(systemName: "network")
+                            Image(systemName: "apple.terminal.fill")
                                 .font(.system(size: 80))
                                 .foregroundColor(.blue)
                                 .frame(maxWidth: .infinity, alignment: .center)
@@ -1472,7 +1487,7 @@ struct HelpView: View {
             Section(header: Text("business_model_header")) {
                 NavigationLink("biz_q1") {
                     VStack(alignment: .leading, spacing: 15) {
-                        if #available(iOS 18.0, *) {
+                        if #available(iOS 18.0, *), enableAnimations {
                             Image(systemName: startImageTransition ? "person.badge.shield.checkmark.fill" : "person.badge.clock.fill")
                                 .font(.system(size: 80))
                                 .foregroundColor(.blue)
@@ -1488,7 +1503,7 @@ struct HelpView: View {
                                     startImageTransition = false
                                 }
                         } else {
-                            Image(systemName: "network")
+                            Image(systemName: "person.badge.shield.checkmark.fill")
                                 .font(.system(size: 80))
                                 .foregroundColor(.blue)
                                 .frame(maxWidth: .infinity, alignment: .center)
@@ -1622,11 +1637,12 @@ struct SetupPage {
 
 struct SetupPageView: View {
     @State var startImageTransition : Bool = false
+    @AppStorage("enableAnimations") var enableAnimations = true
     let page: SetupPage
 
     var body: some View {
         VStack(spacing: tvOSSpacing) {
-            if #available(iOS 18.0, *){
+            if #available(iOS 18.0, *), enableAnimations{
                 Image(systemName: (startImageTransition) ? page.standardImage : page.transitionImage)
                     .font(.system(size: tvOSImageSize))
                     .foregroundColor(.blue)

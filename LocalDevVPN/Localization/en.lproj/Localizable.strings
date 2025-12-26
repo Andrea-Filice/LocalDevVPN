@@ -71,7 +71,7 @@
 "data_collection_policy" = "Data Collection Policy";
 "app_version" = "App Version";
 "help_and_support" = "Help and Support";
-"language" = "Set Language";
+"language" = "Graphic Settings";
 "dropdown_language" = "Language";
 "settings" = "Settings";
 "done" = "Done";
@@ -150,6 +150,8 @@
 "setup_get_started" = "Get Started";
 "setup_next" = "Next";
 "setup_skip" = "Skip";
+"enable_animation" = "Enable Icon Animations";
+"not_supported" = "\nNot supported for your version of iOS (18.0 or later).";
 
 /*MARK: Restart pop-up*/
 "restart_title" = "Restart";
